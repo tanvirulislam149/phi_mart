@@ -7,6 +7,23 @@ from products.serializers import ProductSerializer, CategorySerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.viewsets import ModelViewSet
+
+class ProductViewset(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    def destroy(self, request, *args, **kwargs):     # just customizing a method
+        product = self.get_object()
+        if product.stock > 10:
+            return Response({"message": "Product having stock more than 10 can't be deleted."})
+        self.perform_destroy(product)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class CategoryViewset(ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
 
 # Create your views here.
 
