@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from products.models import Product, Category
+from products.models import Product, Category, Review
 from django.db.models import Count
-from products.serializers import ProductSerializer, CategorySerializer
+from products.serializers import ProductSerializer, CategorySerializer, ReviewSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -23,6 +23,15 @@ class ProductViewset(ModelViewSet):
 class CategoryViewset(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+class ReviewViewset(ModelViewSet):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        return Review.objects.filter(product_id = self.kwargs["product_pk"])
+
+    def get_serializer_context(self):
+        return {"product_id": self.kwargs["product_pk"]}
 
 
 # Create your views here.
