@@ -8,10 +8,20 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from products.filters import ProductFilter
+from products.paginations import DefaultPagination
 
 class ProductViewset(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_class = ProductFilter
+    pagination_class = DefaultPagination
+    search_fields = ["name", "description"]
+    ordering_fields = ["price", "stock"]
+
 
     def destroy(self, request, *args, **kwargs):     # just customizing a method
         product = self.get_object()
