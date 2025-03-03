@@ -17,9 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
+from products.views import home, checking
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("", home, name="home"),
     path('api-auth/', include('rest_framework.urls')),
-    path("api/", include("api.urls"))
+    path("api/", include("api.urls"), name="api_root"),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.jwt')),
+    path("checking/", checking, name="checking")
 ]+ debug_toolbar_urls()
