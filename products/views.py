@@ -11,16 +11,8 @@ from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from products.filters import ProductFilter
-from products.paginations import DefaultPagination
-from django.shortcuts import redirect, HttpResponse
+from products.paginations import DefaultPagination 
 
-
-def checking(request):
-    return HttpResponse("checking...") 
-
-def home(request):
-    # return HttpResponse("Hello, world. You're at the polls index.")
-    return redirect("checking")
 
 class ProductViewset(ModelViewSet):
     queryset = Product.objects.all()
