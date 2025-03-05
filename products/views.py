@@ -12,6 +12,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from products.filters import ProductFilter
 from products.paginations import DefaultPagination 
+from rest_framework.permissions import IsAdminUser, AllowAny
+from api.permissions import IsAdminOrReadOnly
 
 
 class ProductViewset(ModelViewSet):
@@ -22,6 +24,17 @@ class ProductViewset(ModelViewSet):
     pagination_class = DefaultPagination
     search_fields = ["name", "description"]
     ordering_fields = ["price", "stock"]
+    # permission_classes = [IsAdminUser]     # defualt usage of permission
+    permission_classes = [IsAdminOrReadOnly]
+
+
+
+    # def get_permissions(self):
+    #     if self.request.method == "GET":
+    #         return [AllowAny()]      # should return object so must call
+    #     return [IsAdminUser()]
+
+
 
 
     def destroy(self, request, *args, **kwargs):     # just customizing a method
