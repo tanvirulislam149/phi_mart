@@ -4,12 +4,13 @@ from products.views import ProductViewset, CategoryViewset
 from orders.views import CartViewset
 from rest_framework.routers import DefaultRouter
 from products.views import ReviewViewset
-from orders.views import CartItemViewset
+from orders.views import CartItemViewset, OrderViewset
 
 router = routers.DefaultRouter()
 router.register("products", ProductViewset)
 router.register("category", CategoryViewset)
 router.register("carts", CartViewset, basename="carts")
+router.register("orders", OrderViewset, basename="orders")
 
 product_router = routers.NestedDefaultRouter(router, "products", lookup = "product") # lookup - relation making field
 product_router.register("reviews", ReviewViewset, basename="product-reviews")
