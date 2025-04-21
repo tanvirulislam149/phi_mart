@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from products.models import Product, Category, Review
+from products.models import Product, Category, Review, ProductImage
 from django.db.models import Count
-from products.serializers import ProductSerializer, CategorySerializer, ReviewSerializer
+from products.serializers import ProductSerializer, CategorySerializer, ReviewSerializer, ProductImageSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
@@ -12,7 +12,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from products.filters import ProductFilter
 from products.paginations import DefaultPagination 
-from rest_framework.permissions import IsAdminUser, AllowAny
 from api.permissions import IsAdminOrReadOnly
 from products.permissions import IsReviewAuthorOrReadOnly
 
@@ -28,22 +27,27 @@ class ProductViewset(ModelViewSet):
     # permission_classes = [IsAdminUser]     # defualt usage of permission
     permission_classes = [IsAdminOrReadOnly]
 
-
-
     # def get_permissions(self):
     #     if self.request.method == "GET":
     #         return [AllowAny()]      # should return object so must call
     #     return [IsAdminUser()]
 
+    # def destroy(self, request, *args, **kwargs):     # just customizing a method
+    #     product = self.get_object()
+    #     if product.stock > 10:
+    #         return Response({"message": "Product having stock more than 10 can't be deleted."})
+    #     self.perform_destroy(product)
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
+class ProductImageViewset(ModelViewSet):
+    serializer_class = ProductImageSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
-
-    def destroy(self, request, *args, **kwargs):     # just customizing a method
-        product = self.get_object()
-        if product.stock > 10:
-            return Response({"message": "Product having stock more than 10 can't be deleted."})
-        self.perform_destroy(product)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def get_queryset(self):
+        return ProductImage.objects.filter(product_id = self.kwargs["product_pk"])
+    
+    def perform_create(self, serializer):
+        return serializer.save(product_id = self.kwargs["product_pk"])
     
 class CategoryViewset(ModelViewSet):
     queryset = Category.objects.all()
